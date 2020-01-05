@@ -13,20 +13,20 @@ import personnes.Abonne;
 import tachesautomatiques.FinDeTempsReservation;
 
 public abstract class Entite implements Document, Disponibilite {
-	
+
 	private static final int DeuxHeures = 7200000;
 	protected static int TempsEmprunt = 7;
 	protected static int TempsMaxRetour = 14;
-	
+
 	protected int numero;
 	protected String titre;
 	protected Abonne reserveur;
 	protected Abonne emprunteur;
 	protected Date dateretour;
-	
+
 	public Entite(int numero, String titre) {
-		this.numero=numero;
-		this.titre=titre;
+		this.numero = numero;
+		this.titre = titre;
 		this.reserveur = null;
 		this.emprunteur = null;
 		this.dateretour = null;
@@ -70,7 +70,7 @@ public abstract class Entite implements Document, Disponibilite {
 		this.emprunteur = ab;
 		ab.ajouterEmprunt(this);
 		this.dateretour = creerDateRetour();
-		if(ab.equals(reserveur))
+		if (ab.equals(reserveur))
 			ab.deleteReservation(this);
 	}
 
@@ -78,54 +78,57 @@ public abstract class Entite implements Document, Disponibilite {
 	public void retour() throws RetourException {
 		if (reserveur == null && emprunteur == null)
 			throw new RetourException("Le livre n'est ni emprunté, ni retourné, vous ne pouvez pas le retourner");
-		reset();
-		if(reserveur != null)
+		if (reserveur != null)
 			reserveur.deleteReservation(this);
-		if(emprunteur != null) {
+		if (emprunteur != null) {
 			emprunteur.deleteEmprunt(this);
 			Calendar c = Calendar.getInstance();
 			c.setTime(dateretour);
 			c.add(Calendar.DATE, TempsMaxRetour);
 			Date currentDatePlusTwoWeeks = c.getTime();
-			if(currentDatePlusTwoWeeks.before(new Date()));
+			System.out.println(new Date());
+			if (currentDatePlusTwoWeeks.before(new Date())) {
 				emprunteur.sanctionner();
+				throw new RetourException("Le livre à été rendu mais avec un trop grand retard. Vous écopez d'un mois d'interdiction à la bibliothèque");
+			}
 		}
+		reset();
 	}
-	
+
 	@Override
 	public boolean estDisponible() {
 		return this.reserveur == null && this.emprunteur == null;
 	}
-	
+
 	public boolean estEmprunte() {
 		return this.emprunteur != null;
 	}
-	
+
 	public boolean estEmpruntePar(Abonne a) {
-		if(emprunteur != null)
+		if (emprunteur != null)
 			return emprunteur.equals(a);
 		return false;
 	}
-	
+
 	public boolean estReservePar(Abonne a) {
-		if(reserveur != null)
+		if (reserveur != null)
 			return reserveur.equals(a);
 		return false;
 	}
-	
+
 	private static Date creerDateRetour() {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
-	    Date currentDate = new Date();
-	    Calendar c = Calendar.getInstance();
-        c.setTime(currentDate);
-        c.add(Calendar.DATE, TempsEmprunt);
-        Date currentDatePlusOne = c.getTime();
-        return currentDatePlusOne;
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+		Date currentDate = new Date();
+		Calendar c = Calendar.getInstance();
+		c.setTime(currentDate);
+		c.add(Calendar.DATE, TempsEmprunt);
+		Date currentDatePlusOne = c.getTime();
+		return currentDatePlusOne;
 	}
-	
+
 	private void reset() {
 		this.emprunteur = null;
 		this.reserveur = null;
 	}
-	
+
 }

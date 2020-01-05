@@ -89,6 +89,10 @@ public class Abonne {
 		t.schedule(new InterdictionDeBibliotheque(this), currentDatePlusOneMonth);
 	}
 	
+	public boolean estInterdit() {
+		return estInterdit;
+	}
+	
 	@Override
 	public String toString() {
 		return "Prénom : " + prenom + " numéro : " + numero;
