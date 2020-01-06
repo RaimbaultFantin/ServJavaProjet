@@ -4,11 +4,11 @@ import java.util.TimerTask;
 
 import personnes.Abonne;
 
-public class InterdictionDeBibliotheque extends TimerTask {
+public class FinInterdictionDeBibliotheque extends TimerTask {
 
 	private Abonne ab;
 
-	public InterdictionDeBibliotheque(Abonne ab) {
+	public FinInterdictionDeBibliotheque(Abonne ab) {
 		this.ab = ab;
 	}
 

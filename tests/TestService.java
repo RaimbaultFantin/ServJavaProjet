@@ -19,14 +19,14 @@ class TestService {
 
 	@Test
 	void test() {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
-	    Date currentDate = new Date();  
-	    Calendar c = Calendar.getInstance();
-        c.setTime(currentDate);
-        c.add(Calendar.DATE, 14);
-        Date currentDatePlusOne = c.getTime();
-        if(currentDate.before(currentDatePlusOne))
-        	System.out.println("hello");
+		Entite livre = new Livre(1, "Harry Pooter");
+		Abonne ab = new Abonne(1, "Fantin", 18);
+		try {
+			livre.emprunter(ab);
+		} catch (EmpruntException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

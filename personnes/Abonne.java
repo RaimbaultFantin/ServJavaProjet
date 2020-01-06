@@ -8,7 +8,7 @@ import java.util.Timer;
 
 import documents.Entite;
 import tachesautomatiques.FinDeTempsReservation;
-import tachesautomatiques.InterdictionDeBibliotheque;
+import tachesautomatiques.FinInterdictionDeBibliotheque;
 
 public class Abonne {
 	private final long UNMOIS = 262000000;
@@ -86,7 +86,7 @@ public class Abonne {
 		c.add(Calendar.MONTH, 1);
 		Date currentDatePlusOneMonth = c.getTime();
 		Timer t = new Timer();
-		t.schedule(new InterdictionDeBibliotheque(this), currentDatePlusOneMonth);
+		t.schedule(new FinInterdictionDeBibliotheque(this), currentDatePlusOneMonth);
 	}
 	
 	public boolean estInterdit() {

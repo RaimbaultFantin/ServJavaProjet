@@ -39,6 +39,8 @@ public abstract class Entite implements Document, Disponibilite {
 
 	@Override
 	public void reserver(Abonne ab) throws EmpruntException {
+		if(ab.estInterdit())
+			throw new EmpruntException("Vous êtes interdit de Bibliothèque.");
 		if (ab.equals(emprunteur))
 			throw new EmpruntException("Vous êtes déjà en possession du livre, vous ne pouvez pas le réserver !");
 		if (reserveur != null)
@@ -61,6 +63,8 @@ public abstract class Entite implements Document, Disponibilite {
 
 	@Override
 	public void emprunter(Abonne ab) throws EmpruntException {
+		if(ab.estInterdit())
+			throw new EmpruntException("Vous êtes interdit de Bibliothèque.");
 		if (ab.equals(emprunteur))
 			throw new EmpruntException("Vous êtes déjà en possession du livre, vous ne pouvez pas l'emprunter !");
 		if (reserveur != null && !ab.equals(reserveur))
@@ -68,8 +72,8 @@ public abstract class Entite implements Document, Disponibilite {
 		if (emprunteur != null)
 			throw new EmpruntException("Le livre est emprunté !");
 		this.emprunteur = ab;
-		ab.ajouterEmprunt(this);
 		this.dateretour = creerDateRetour();
+		ab.ajouterEmprunt(this);
 		if (ab.equals(reserveur))
 			ab.deleteReservation(this);
 	}
@@ -85,9 +89,8 @@ public abstract class Entite implements Document, Disponibilite {
 			Calendar c = Calendar.getInstance();
 			c.setTime(dateretour);
 			c.add(Calendar.DATE, TempsMaxRetour);
-			Date currentDatePlusTwoWeeks = c.getTime();
-			System.out.println(new Date());
-			if (currentDatePlusTwoWeeks.before(new Date())) {
+			Date dateRetourPlusDeuxSemaines = c.getTime();
+			if (dateRetourPlusDeuxSemaines.before(new Date())) {
 				emprunteur.sanctionner();
 				throw new RetourException("Le livre à été rendu mais avec un trop grand retard. Vous écopez d'un mois d'interdiction à la bibliothèque");
 			}
@@ -117,7 +120,6 @@ public abstract class Entite implements Document, Disponibilite {
 	}
 
 	private static Date creerDateRetour() {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
 		Date currentDate = new Date();
 		Calendar c = Calendar.getInstance();
 		c.setTime(currentDate);

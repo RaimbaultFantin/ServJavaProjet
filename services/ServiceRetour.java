@@ -54,19 +54,21 @@ public class ServiceRetour implements Runnable {
 			Entite entite = Bibliotheque.getEntite(noCours);
 
 			if (entite != null) {
-				if(entite.estEmpruntePar(currentAbonne) || entite.estReservePar(currentAbonne)) {
+				if (entite.estEmpruntePar(currentAbonne) || entite.estReservePar(currentAbonne)) {
 					synchronized (entite) {
 						try {
 							entite.retour();
-							reponse = "Le "+entite.getClass().getSimpleName()+" a bien été rendu à la Bibliothèque !";
+							reponse = "Le " + entite.getClass().getSimpleName()
+									+ " a bien été rendu à la Bibliothèque !";
 						} catch (RetourException e) {
 							reponse = e.toString();
 						} finally {
 							out.println(reponse);
 						}
 					}
-				}else {
-					reponse = "Vous ne pouvez pas rendre un "+entite.getClass().getSimpleName()+" que vous n'avez ni réservé ni emprunté";
+				} else {
+					reponse = "Vous ne pouvez pas rendre un " + entite.getClass().getSimpleName()
+							+ " que vous n'avez ni réservé ni emprunté";
 					out.println(reponse);
 				}
 			} else {
