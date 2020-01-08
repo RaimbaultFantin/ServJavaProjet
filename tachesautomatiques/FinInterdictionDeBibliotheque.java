@@ -15,6 +15,7 @@ public class FinInterdictionDeBibliotheque extends TimerTask {
 	@Override
 	public void run() {
 		ab.setEstInterdit(false);
+		ab.setInterdictionBibliotheque(null);
 	}
 
 }

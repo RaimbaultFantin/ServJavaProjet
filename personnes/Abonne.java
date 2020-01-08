@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import documents.Entite;
 import tachesautomatiques.FinDeTempsReservation;
@@ -19,6 +20,7 @@ public class Abonne {
 	private List<Entite> documentsReserves;
 	private List<Entite> documentsEmpruntes;
 	private boolean estInterdit;
+	private TimerTask interdictionBibliotheque;
 	
 	public Abonne(int numero, String prenom, int age) {
 		this.numero = numero;
@@ -27,6 +29,7 @@ public class Abonne {
 		this.documentsEmpruntes = new ArrayList<Entite>();
 		this.documentsReserves = new ArrayList<Entite>();
 		this.estInterdit = false;
+		this.interdictionBibliotheque = null;
 	}
 
 	@Override
@@ -70,7 +73,11 @@ public class Abonne {
 	public void ajouterReservation(Entite entite) {
 		this.documentsReserves.add(entite);
 	}
-	
+
+	public void setInterdictionBibliotheque(TimerTask interdictionBibliotheque) {
+		this.interdictionBibliotheque = interdictionBibliotheque;
+	}
+
 	public void deleteReservation(Entite entite) {
 		this.documentsReserves.remove(entite);
 	}
@@ -80,13 +87,16 @@ public class Abonne {
 	}
 	
 	public void sanctionner() {
+		if(this.interdictionBibliotheque != null)
+			this.interdictionBibliotheque.cancel();
 		this.estInterdit = true;
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 		c.add(Calendar.MONTH, 1);
 		Date currentDatePlusOneMonth = c.getTime();
 		Timer t = new Timer();
-		t.schedule(new FinInterdictionDeBibliotheque(this), currentDatePlusOneMonth);
+		this.interdictionBibliotheque = new FinInterdictionDeBibliotheque(this);
+		t.schedule(this.interdictionBibliotheque, currentDatePlusOneMonth);
 	}
 	
 	public boolean estInterdit() {

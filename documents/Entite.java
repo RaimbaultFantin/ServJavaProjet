@@ -4,32 +4,36 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
+import java.util.TimerTask;
 
-import contrat.Disponibilite;
 import contrat.Document;
 import exceptions.EmpruntException;
 import exceptions.RetourException;
 import personnes.Abonne;
+import tachesautomatiques.FinDeTempsEmprunt;
 import tachesautomatiques.FinDeTempsReservation;
 
-public abstract class Entite implements Document, Disponibilite {
+public abstract class Entite implements Document {
 
-	private static final int DeuxHeures = 7200000;
+	protected static final int DEUXHEURES = 7200000;
 	protected static int TempsEmprunt = 7;
 	protected static int TempsMaxRetour = 14;
+	protected static final double DEUXCHANCESURTROIS = 0.66;
 
 	protected int numero;
 	protected String titre;
 	protected Abonne reserveur;
 	protected Abonne emprunteur;
-	protected Date dateretour;
-
+	protected TimerTask finTempsEmprunt;
+	protected TimerTask finTempsReservation;
+	
 	public Entite(int numero, String titre) {
 		this.numero = numero;
 		this.titre = titre;
 		this.reserveur = null;
 		this.emprunteur = null;
-		this.dateretour = null;
+		this.finTempsEmprunt = null;
+		this.finTempsReservation = null;
 	}
 
 	@Override
@@ -39,7 +43,7 @@ public abstract class Entite implements Document, Disponibilite {
 
 	@Override
 	public void reserver(Abonne ab) throws EmpruntException {
-		if(ab.estInterdit())
+		if (ab.estInterdit())
 			throw new EmpruntException("Vous êtes interdit de Bibliothèque.");
 		if (ab.equals(emprunteur))
 			throw new EmpruntException("Vous êtes déjà en possession du livre, vous ne pouvez pas le réserver !");
@@ -50,7 +54,8 @@ public abstract class Entite implements Document, Disponibilite {
 		this.reserveur = ab;
 		ab.ajouterReservation(this);
 		Timer t = new Timer();
-		t.schedule(new FinDeTempsReservation(this), DeuxHeures);
+		this.finTempsReservation = new FinDeTempsReservation(this);
+		t.schedule(this.finTempsReservation, DEUXHEURES);
 	}
 
 	public void setReserveur(Abonne reserveur) {
@@ -63,7 +68,7 @@ public abstract class Entite implements Document, Disponibilite {
 
 	@Override
 	public void emprunter(Abonne ab) throws EmpruntException {
-		if(ab.estInterdit())
+		if (ab.estInterdit())
 			throw new EmpruntException("Vous êtes interdit de Bibliothèque.");
 		if (ab.equals(emprunteur))
 			throw new EmpruntException("Vous êtes déjà en possession du livre, vous ne pouvez pas l'emprunter !");
@@ -72,33 +77,36 @@ public abstract class Entite implements Document, Disponibilite {
 		if (emprunteur != null)
 			throw new EmpruntException("Le livre est emprunté !");
 		this.emprunteur = ab;
-		this.dateretour = creerDateRetour();
 		ab.ajouterEmprunt(this);
-		if (ab.equals(reserveur))
+		Timer t = new Timer();
+		this.finTempsEmprunt = new FinDeTempsEmprunt(emprunteur);
+		t.schedule(this.finTempsEmprunt, this.dateRetourPlusDeuxSemaines());
+		if (ab.equals(reserveur)) {
 			ab.deleteReservation(this);
+			this.finTempsReservation.cancel();
+		}
 	}
 
 	@Override
 	public void retour() throws RetourException {
 		if (reserveur == null && emprunteur == null)
-			throw new RetourException("Le livre n'est ni emprunté, ni retourné, vous ne pouvez pas le retourner");
+			throw new RetourException("Le livre n'est ni emprunté, ni réservé, vous ne pouvez pas le retourner");
 		if (reserveur != null)
 			reserveur.deleteReservation(this);
 		if (emprunteur != null) {
 			emprunteur.deleteEmprunt(this);
-			Calendar c = Calendar.getInstance();
-			c.setTime(dateretour);
-			c.add(Calendar.DATE, TempsMaxRetour);
-			Date dateRetourPlusDeuxSemaines = c.getTime();
-			if (dateRetourPlusDeuxSemaines.before(new Date())) {
-				emprunteur.sanctionner();
-				throw new RetourException("Le livre à été rendu mais avec un trop grand retard. Vous écopez d'un mois d'interdiction à la bibliothèque");
-			}
+			this.finTempsEmprunt.cancel();
+		}
+		double chanceDegradation = Math.random();
+		System.out.println(chanceDegradation);
+		if(chanceDegradation > DEUXCHANCESURTROIS) {
+			emprunteur.sanctionner();
+			reset();
+			throw new RetourException("Le livre a bien été rendu mais vous écopez d'un mois d'interdiction à la bibliothèque pour dégradation");
 		}
 		reset();
 	}
 
-	@Override
 	public boolean estDisponible() {
 		return this.reserveur == null && this.emprunteur == null;
 	}
@@ -119,18 +127,18 @@ public abstract class Entite implements Document, Disponibilite {
 		return false;
 	}
 
-	private static Date creerDateRetour() {
-		Date currentDate = new Date();
+	private Date dateRetourPlusDeuxSemaines() {
 		Calendar c = Calendar.getInstance();
-		c.setTime(currentDate);
-		c.add(Calendar.DATE, TempsEmprunt);
-		Date currentDatePlusOne = c.getTime();
-		return currentDatePlusOne;
+		c.setTime(new Date());
+		c.add(Calendar.DATE, TempsEmprunt + TempsMaxRetour); // arbitrairement le délais d'emprunt d'un livre est de 7 jours
+		return c.getTime();
 	}
 
 	private void reset() {
 		this.emprunteur = null;
 		this.reserveur = null;
+		this.finTempsEmprunt = null;
+		this.finTempsReservation = null;
 	}
 
 }
