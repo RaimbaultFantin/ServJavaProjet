@@ -17,6 +17,10 @@ public class Bibliotheque {
 		return abonnes;
 	}
 	
+	/**
+	 * 
+	 * @return liste entite d'une bibliothèque
+	 */
 	public static List<Entite> getEntitesDisponibles() {
 		List<Entite> livresDispo = new ArrayList<>();
 		for (Entite l : entites) {
@@ -27,6 +31,11 @@ public class Bibliotheque {
 		return livresDispo;
 	}
 	
+	/**
+	 * 
+	 * @param numeroAb
+	 * @return abonne ou null si id invalide
+	 */
 	public static Abonne getAbonne(int numeroAb) {
 		for (Abonne a : abonnes)
 			if (a.getNumero() == numeroAb)
@@ -34,6 +43,11 @@ public class Bibliotheque {
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param numero
+	 * @return entite ou null si id invalide
+	 */
 	public static Entite getEntite(int numero) {
 		for (Entite l : entites)
 			if (l.numero() == numero)

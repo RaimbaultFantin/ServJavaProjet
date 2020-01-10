@@ -43,7 +43,7 @@ public class ServiceRetour implements Runnable {
 			int numeroAb = Integer.parseInt(in.readLine());
 			Abonne currentAbonne = Bibliotheque.getAbonne(numeroAb);
 
-			// envoit des livres disponnibles au client
+			// envoit des livres que possède le client
 			str = new StringBuilder("Documents que vous possédez : ");
 			str.append(currentAbonne.getDocumentsEmpruntes());
 			str.append(" Documents que vous avez réservez : " + currentAbonne.getDocumentsReserves());

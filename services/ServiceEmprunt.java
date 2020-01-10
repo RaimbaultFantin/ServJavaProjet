@@ -17,6 +17,10 @@ public class ServiceEmprunt implements Runnable {
 
 	private Socket client;
 
+	/**
+	 * 
+	 * @param socket
+	 */
 	public ServiceEmprunt(Socket socket) {
 		this.client = socket;
 	}

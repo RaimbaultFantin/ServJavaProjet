@@ -7,15 +7,20 @@ import services.ServiceReservation;
 import services.ServiceRetour;
 
 public class ServeurRetour implements Runnable {
-private ServerSocket socket;
-	
-	public ServeurRetour(int port) throws IOException{
+	private ServerSocket socket;
+
+	/**
+	 * 
+	 * @param port
+	 * @throws IOException
+	 */
+	public ServeurRetour(int port) throws IOException {
 		this.socket = new ServerSocket(port);
 	}
 
 	@Override
 	public void run() {
-		while(true) {
+		while (true) {
 			try {
 				new Thread(new ServiceRetour(socket.accept())).start();
 			} catch (IOException e) {

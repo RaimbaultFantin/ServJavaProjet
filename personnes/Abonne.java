@@ -22,6 +22,12 @@ public class Abonne {
 	private boolean estInterdit;
 	private TimerTask interdictionBibliotheque;
 	
+	/**
+	 * 
+	 * @param numero
+	 * @param prenom
+	 * @param age
+	 */
 	public Abonne(int numero, String prenom, int age) {
 		this.numero = numero;
 		this.prenom = prenom;
@@ -92,7 +98,7 @@ public class Abonne {
 		this.estInterdit = true;
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
-		c.add(Calendar.MONTH, 1);
+		c.add(Calendar.MONTH, 1); // ajout d'un mois de punition
 		Date currentDatePlusOneMonth = c.getTime();
 		Timer t = new Timer();
 		this.interdictionBibliotheque = new FinInterdictionDeBibliotheque(this);

@@ -5,11 +5,15 @@ import java.util.TimerTask;
 import personnes.Abonne;
 
 public class FinDeTempsEmprunt extends TimerTask {
-	
+
 	private Abonne ab;
-	
+
+	/**
+	 * 
+	 * @param ab
+	 */
 	public FinDeTempsEmprunt(Abonne ab) {
-		this.ab=ab;
+		this.ab = ab;
 	}
 
 	@Override

@@ -16,7 +16,7 @@ public class Livre extends Entite {
 
 	@Override
 	public String toString() {
-		return "Titre : " + titre + " numero : " + numero;
+		return "[ Titre : " + titre + " numero : " + numero + " ]";
 	}
 
 }

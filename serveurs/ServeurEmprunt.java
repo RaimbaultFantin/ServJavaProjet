@@ -4,16 +4,21 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import services.ServiceEmprunt;
 
-public class ServeurEmprunt implements Runnable{
-private ServerSocket socket;
+public class ServeurEmprunt implements Runnable {
+	private ServerSocket socket;
 	
-	public ServeurEmprunt(int port) throws IOException{
+	/**
+	 * 
+	 * @param port
+	 * @throws IOException
+	 */
+	public ServeurEmprunt(int port) throws IOException {
 		this.socket = new ServerSocket(port);
 	}
 
 	@Override
 	public void run() {
-		while(true) {
+		while (true) {
 			try {
 				new Thread(new ServiceEmprunt(socket.accept())).start();
 			} catch (IOException e) {
@@ -25,6 +30,6 @@ private ServerSocket socket;
 				System.err.println("Arrêt du serveur " + this.socket.getLocalPort());
 			}
 		}
-		
+
 	}
 }

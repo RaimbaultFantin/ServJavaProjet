@@ -5,17 +5,22 @@ import java.net.ServerSocket;
 
 import services.ServiceReservation;
 
-public class ServeurReservation implements Runnable{
-	
+public class ServeurReservation implements Runnable {
+
 	private ServerSocket socket;
-	
-	public ServeurReservation(int port) throws IOException{
+
+	/**
+	 * 
+	 * @param port
+	 * @throws IOException
+	 */
+	public ServeurReservation(int port) throws IOException {
 		this.socket = new ServerSocket(port);
 	}
 
 	@Override
 	public void run() {
-		while(true) {
+		while (true) {
 			try {
 				new Thread(new ServiceReservation(socket.accept())).start();
 			} catch (IOException e) {
@@ -27,7 +32,7 @@ public class ServeurReservation implements Runnable{
 				System.err.println("Arrêt du serveur " + this.socket.getLocalPort());
 			}
 		}
-		
+
 	}
-	
+
 }

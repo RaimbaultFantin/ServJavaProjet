@@ -8,6 +8,10 @@ public class FinInterdictionDeBibliotheque extends TimerTask {
 
 	private Abonne ab;
 
+	/**
+	 * 
+	 * @param ab
+	 */
 	public FinInterdictionDeBibliotheque(Abonne ab) {
 		this.ab = ab;
 	}

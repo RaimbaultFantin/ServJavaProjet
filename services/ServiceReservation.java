@@ -18,6 +18,10 @@ public class ServiceReservation implements Runnable {
 	
 	private final Socket client;
 	
+	/**
+	 * 
+	 * @param socket
+	 */
 	public ServiceReservation(Socket socket) {
 		this.client = socket;
 	}

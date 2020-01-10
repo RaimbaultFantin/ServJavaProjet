@@ -17,12 +17,14 @@ import services.ServiceReservation;
 public class AppServeur {
 
 	public static void main(String[] args) {
-		
+		// init Bibliothèque
 		new Bibliotheque(initEntite(), initAbonne());
+		
+		// 3 ports de connexion
 		final int PORTRESERVATION = 2500;
 		final int PORTEMPRUNT = 2600;
 		final int PORTRETOUR = 2700;
-		
+
 		try {
 			new Thread(new ServeurReservation(PORTRESERVATION)).start();
 			System.out.println("Serveur lance sur le port " + PORTRESERVATION);
@@ -49,9 +51,9 @@ public class AppServeur {
 
 	private static List<Abonne> initAbonne() {
 		List<Abonne> abonnes = new ArrayList<Abonne>();
-		abonnes.add(new Abonne(1, "Fantin",18));
-		abonnes.add(new Abonne(2, "Oliwier",14));
-		abonnes.add(new Abonne(3, "Mariam",11));
+		abonnes.add(new Abonne(1, "Fantin", 18));
+		abonnes.add(new Abonne(2, "Oliwier", 14));
+		abonnes.add(new Abonne(3, "Mariam", 11));
 		return abonnes;
 	}
 
